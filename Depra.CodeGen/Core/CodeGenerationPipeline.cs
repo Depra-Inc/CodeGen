@@ -91,12 +91,12 @@ namespace Depra.CodeGen.Core
 				var hierarchy = code.FileName.Split('/');
 				for (var index = 0; index < hierarchy.Length; index++)
 				{
+					path += "/" + hierarchy[index];
 					if (index == hierarchy.Length - 1)
 					{
 						break;
 					}
 
-					path += "/" + hierarchy[index];
 					if (Directory.Exists(path) == false)
 					{
 						Directory.CreateDirectory(path);
