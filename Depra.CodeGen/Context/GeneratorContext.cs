@@ -17,5 +17,7 @@ namespace Depra.CodeGen.Context
 
 		public void AddCode(string fileName, string text) =>
 			_codeList.Add(new CodeText(fileName, text));
+
+		public void OverrideFolderPath(string path) => FolderPath = path;
 	}
 }
