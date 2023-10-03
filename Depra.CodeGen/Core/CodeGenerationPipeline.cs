@@ -40,16 +40,15 @@ namespace Depra.CodeGen.Core
 			foreach (var generatorType in generatorTypes)
 			{
 				var context = ExecuteGeneration(generatorType);
-				if (GenerateScriptFromContext(context))
-				{
-					changed = true;
-				}
+				changed = GenerateScriptFromContext(context);
 			}
 
 			if (changed)
 			{
 				ExecutePostProcess();
 			}
+
+			IsGenerating = false;
 		}
 
 		private void ExecutePreProcess()
@@ -80,37 +79,33 @@ namespace Depra.CodeGen.Core
 		private static bool GenerateScriptFromContext(GeneratorContext context)
 		{
 			var changed = false;
-			var folderPath = context.FolderPath;
 
-			if (Directory.Exists(folderPath) == false)
+			if (Directory.Exists(context.FolderPath) == false)
 			{
-				Directory.CreateDirectory(folderPath);
+				Directory.CreateDirectory(context.FolderPath);
 			}
 
 			foreach (var code in context.CodeList)
 			{
+				var path = context.FolderPath;
 				var hierarchy = code.FileName.Split('/');
-				var path = folderPath;
 				for (var index = 0; index < hierarchy.Length; index++)
 				{
-					path += "/" + hierarchy[index];
 					if (index == hierarchy.Length - 1)
 					{
 						break;
 					}
 
+					path += "/" + hierarchy[index];
 					if (Directory.Exists(path) == false)
 					{
 						Directory.CreateDirectory(path);
 					}
 				}
 
-				if (File.Exists(path))
+				if (File.Exists(path) && File.ReadAllText(path) == code.Text)
 				{
-					if (File.ReadAllText(path) == code.Text)
-					{
-						continue;
-					}
+					continue;
 				}
 
 				File.WriteAllText(path, code.Text);
